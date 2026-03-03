@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:countries_app/data/repositories/country_repository.dart';
 import 'package:countries_app/data/models/country_summary.dart';
 import 'home_cubit.dart';
-
+import 'package:countries_app/core/di/injection.dart';
 class FavoritesCubit extends Cubit<List<CountrySummary>> {
   final CountryRepository repository;
  late final HomeCubit homeCubit;
