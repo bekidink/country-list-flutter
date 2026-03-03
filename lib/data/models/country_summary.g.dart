@@ -1,0 +1,27 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'country_summary.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$CountrySummaryImpl _$$CountrySummaryImplFromJson(Map<String, dynamic> json) =>
+    _$CountrySummaryImpl(
+      name: Name.fromJson(json['name'] as Map<String, dynamic>),
+      flags: Flags.fromJson(json['flags'] as Map<String, dynamic>),
+      population: (json['population'] as num).toInt(),
+      cca2: json['cca2'] as String,
+      capital:
+          (json['capital'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    );
+
+Map<String, dynamic> _$$CountrySummaryImplToJson(
+        _$CountrySummaryImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'flags': instance.flags,
+      'population': instance.population,
+      'cca2': instance.cca2,
+      'capital': instance.capital,
+    };
