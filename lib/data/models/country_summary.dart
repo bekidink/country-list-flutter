@@ -1,11 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive/hive.dart';
 import 'name.dart';
 import 'flags.dart';
 
 part 'country_summary.freezed.dart';
 part 'country_summary.g.dart';
 
+
 @freezed
+@HiveType(typeId: 2)
 class CountrySummary with _$CountrySummary {
   const factory CountrySummary({
     required Name name,

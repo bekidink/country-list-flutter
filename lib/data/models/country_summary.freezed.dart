@@ -20,10 +20,15 @@ CountrySummary _$CountrySummaryFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CountrySummary {
+  @HiveField(0)
   Name get name => throw _privateConstructorUsedError;
+  @HiveField(1)
   Flags get flags => throw _privateConstructorUsedError;
+  @HiveField(2)
   int get population => throw _privateConstructorUsedError;
+  @HiveField(3)
   String get cca2 => throw _privateConstructorUsedError;
+  @HiveField(4)
   List<String>? get capital => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,11 +44,11 @@ abstract class $CountrySummaryCopyWith<$Res> {
       _$CountrySummaryCopyWithImpl<$Res, CountrySummary>;
   @useResult
   $Res call(
-      {Name name,
-      Flags flags,
-      int population,
-      String cca2,
-      List<String>? capital});
+      {@HiveField(0) Name name,
+      @HiveField(1) Flags flags,
+      @HiveField(2) int population,
+      @HiveField(3) String cca2,
+      @HiveField(4) List<String>? capital});
 
   $NameCopyWith<$Res> get name;
   $FlagsCopyWith<$Res> get flags;
@@ -118,11 +123,11 @@ abstract class _$$CountrySummaryImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Name name,
-      Flags flags,
-      int population,
-      String cca2,
-      List<String>? capital});
+      {@HiveField(0) Name name,
+      @HiveField(1) Flags flags,
+      @HiveField(2) int population,
+      @HiveField(3) String cca2,
+      @HiveField(4) List<String>? capital});
 
   @override
   $NameCopyWith<$Res> get name;
@@ -176,26 +181,31 @@ class __$$CountrySummaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CountrySummaryImpl implements _CountrySummary {
   const _$CountrySummaryImpl(
-      {required this.name,
-      required this.flags,
-      required this.population,
-      required this.cca2,
-      final List<String>? capital})
+      {@HiveField(0) required this.name,
+      @HiveField(1) required this.flags,
+      @HiveField(2) required this.population,
+      @HiveField(3) required this.cca2,
+      @HiveField(4) final List<String>? capital})
       : _capital = capital;
 
   factory _$CountrySummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$CountrySummaryImplFromJson(json);
 
   @override
+  @HiveField(0)
   final Name name;
   @override
+  @HiveField(1)
   final Flags flags;
   @override
+  @HiveField(2)
   final int population;
   @override
+  @HiveField(3)
   final String cca2;
   final List<String>? _capital;
   @override
+  @HiveField(4)
   List<String>? get capital {
     final value = _capital;
     if (value == null) return null;
@@ -244,24 +254,29 @@ class _$CountrySummaryImpl implements _CountrySummary {
 
 abstract class _CountrySummary implements CountrySummary {
   const factory _CountrySummary(
-      {required final Name name,
-      required final Flags flags,
-      required final int population,
-      required final String cca2,
-      final List<String>? capital}) = _$CountrySummaryImpl;
+      {@HiveField(0) required final Name name,
+      @HiveField(1) required final Flags flags,
+      @HiveField(2) required final int population,
+      @HiveField(3) required final String cca2,
+      @HiveField(4) final List<String>? capital}) = _$CountrySummaryImpl;
 
   factory _CountrySummary.fromJson(Map<String, dynamic> json) =
       _$CountrySummaryImpl.fromJson;
 
   @override
+  @HiveField(0)
   Name get name;
   @override
+  @HiveField(1)
   Flags get flags;
   @override
+  @HiveField(2)
   int get population;
   @override
+  @HiveField(3)
   String get cca2;
   @override
+  @HiveField(4)
   List<String>? get capital;
   @override
   @JsonKey(ignore: true)

@@ -20,6 +20,7 @@ Name _$NameFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Name {
+  @HiveField(0)
   String get common => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -32,7 +33,7 @@ abstract class $NameCopyWith<$Res> {
   factory $NameCopyWith(Name value, $Res Function(Name) then) =
       _$NameCopyWithImpl<$Res, Name>;
   @useResult
-  $Res call({String common});
+  $Res call({@HiveField(0) String common});
 }
 
 /// @nodoc
@@ -66,7 +67,7 @@ abstract class _$$NameImplCopyWith<$Res> implements $NameCopyWith<$Res> {
       __$$NameImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String common});
+  $Res call({@HiveField(0) String common});
 }
 
 /// @nodoc
@@ -93,12 +94,13 @@ class __$$NameImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$NameImpl implements _Name {
-  const _$NameImpl({required this.common});
+  const _$NameImpl({@HiveField(0) required this.common});
 
   factory _$NameImpl.fromJson(Map<String, dynamic> json) =>
       _$$NameImplFromJson(json);
 
   @override
+  @HiveField(0)
   final String common;
 
   @override
@@ -133,11 +135,13 @@ class _$NameImpl implements _Name {
 }
 
 abstract class _Name implements Name {
-  const factory _Name({required final String common}) = _$NameImpl;
+  const factory _Name({@HiveField(0) required final String common}) =
+      _$NameImpl;
 
   factory _Name.fromJson(Map<String, dynamic> json) = _$NameImpl.fromJson;
 
   @override
+  @HiveField(0)
   String get common;
   @override
   @JsonKey(ignore: true)
