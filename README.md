@@ -55,7 +55,7 @@ Built with clean architecture, modern Flutter practices, and all required featur
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/countries-app.git
+git clone https://github.com/bekidink/country-list-flutter.git
 cd countries-app
 
 # 2. Install dependencies
