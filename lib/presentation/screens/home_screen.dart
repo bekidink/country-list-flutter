@@ -18,13 +18,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   Timer? _debounce;
   String _sortBy = 'name';
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto focus + show cursor when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
 
   @override
   void dispose() {
     _debounce?.cancel();
     _searchController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -45,54 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Explore Countries'),
-        elevation: 0,
+        title: const Text('Countries'),
         centerTitle: true,
+        elevation: 0,
         actions: [
-          // Sort selector
-          PopupMenuButton<String>(
-            offset: const Offset(0, 50),
-            icon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _sortBy == 'name' ? Icons.sort_by_alpha : Icons.trending_up,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  _sortBy == 'name' ? 'Name' : 'Population',
-                  style: TextStyle(color: theme.colorScheme.primary),
-                ),
-                const Icon(Icons.arrow_drop_down, size: 20),
-              ],
-            ),
-            onSelected: (value) {
-              setState(() => _sortBy = value);
-              context.read<HomeCubit>().sort(value);
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'name',
-                child: ListTile(
-                  leading: const Icon(Icons.sort_by_alpha),
-                  title: const Text('Sort by Name'),
-                  selected: _sortBy == 'name',
-                ),
-              ),
-              PopupMenuItem(
-                value: 'population',
-                child: ListTile(
-                  leading: const Icon(Icons.trending_up),
-                  title: const Text('Sort by Population'),
-                  selected: _sortBy == 'population',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 8),
-
-          // Theme toggle
           BlocBuilder<ThemeCubit, ThemeState>(
             builder: (context, state) {
               IconData icon = Icons.brightness_auto;
@@ -103,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return IconButton(
                 icon: Icon(icon),
-                tooltip: 'Toggle theme',
                 onPressed: () => context.read<ThemeCubit>().toggleTheme(),
               );
             },
@@ -114,96 +80,86 @@ class _HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator.adaptive(
         onRefresh: _handleRefresh,
         color: theme.colorScheme.primary,
-        backgroundColor: theme.colorScheme.surface,
-        displacement: 60,
-        strokeWidth: 3,
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            // Search bar
+            // SEARCH INPUT - EXACTLY LIKE THE IMAGE + FIXED
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: SearchBar(
                   controller: _searchController,
-                  leading: const Icon(Icons.search_rounded),
-                  hintText: 'Search for a country...',
-                  elevation: const MaterialStatePropertyAll(3),
+                  focusNode: _focusNode, // ← Auto cursor
+                  leading: const Icon(Icons.search, size: 22),
+                  hintText: 'Search for a country',
+                  elevation: const MaterialStatePropertyAll(0),
                   shape: MaterialStatePropertyAll(
                     RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                        borderRadius: BorderRadius.circular(30)),
                   ),
-                  
+              backgroundColor:   theme.brightness == Brightness.light
+      ? const MaterialStatePropertyAll(
+                          Color(0xFFF0F2F5)) // 👈 soft grey in light mode
+      :  MaterialStatePropertyAll(
+                          theme.colorScheme.surface), 
+                  trailing: [
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.filter_list),
+                      tooltip: 'Sort by',
+                      onSelected: (value) {
+                        if (_sortBy != value) {
+                          setState(() => _sortBy = value);
+                          context.read<HomeCubit>().sort(value);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'name',
+                          child: ListTile(
+                            leading: const Icon(Icons.sort_by_alpha),
+                            title: const Text('Sort by Name'),
+                            selected: _sortBy == 'name',
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'population',
+                          child: ListTile(
+                            leading: const Icon(Icons.trending_up),
+                            title: const Text('Sort by Population'),
+                            selected: _sortBy == 'population',
+                          ),
+                        ),
+                      ],
+                    ),
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _searchController,
+                      builder: (context, value, child) {
+                        if (value.text.isEmpty) return const SizedBox.shrink();
+                        return IconButton(
+                          icon: const Icon(Icons.clear, size: 20),
+                          onPressed: () {
+                            _searchController.clear();
+                            context.read<HomeCubit>().search('');
+                            _focusNode.requestFocus(); // keep cursor
+                          },
+                        );
+                      },
+                    ),
+                  ],
                   onChanged: _onSearchChanged,
                   padding: const MaterialStatePropertyAll(
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   ),
                 ),
               ),
             ),
 
-            // Continent filter chips
-            SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      FilterChip(
-                        label: const Text('All'),
-                        selected: context.select<HomeCubit, bool>(
-                          (cubit) =>
-                              cubit.state is HomeSuccess &&
-                              (cubit.state as HomeSuccess).selectedContinent ==
-                                  null,
-                        ),
-                        onSelected: (_) =>
-                            context.read<HomeCubit>().filterByContinent(null),
-                        selectedColor: theme.colorScheme.primaryContainer,
-                      ),
-                      const SizedBox(width: 8),
-                      ...['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
-                          .map((continent) {
-                        final isSelected = context.select<HomeCubit, bool>(
-                          (cubit) =>
-                              cubit.state is HomeSuccess &&
-                              (cubit.state as HomeSuccess).selectedContinent ==
-                                  continent,
-                        );
-
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: FilterChip(
-                            label: Text(continent),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              context.read<HomeCubit>().filterByContinent(
-                                    selected ? continent : null,
-                                  );
-                            },
-                            selectedColor: theme.colorScheme.primaryContainer,
-                            checkmarkColor:
-                                theme.colorScheme.onPrimaryContainer,
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Content
+            // Main list
             SliverFillRemaining(
               hasScrollBody: true,
               child: BlocBuilder<HomeCubit, HomeState>(
                 builder: (context, state) {
-                  if (state is HomeLoading) {
-                    return const ShimmerList();
-                  }
-
+                  if (state is HomeLoading) return const ShimmerList();
                   if (state is HomeError) {
                     return ErrorRetry(
                       message: state.message,
@@ -213,33 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   if (state is HomeSuccess) {
                     if (state.filtered.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off_rounded,
-                              size: 96,
-                              color: theme.colorScheme.outline.withOpacity(0.6),
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              'No countries found',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Try changing your search or filter',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      return const Center(child: Text('No countries found'));
                     }
 
                     return ListView.builder(
@@ -264,7 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     );
                   }
-
                   return const SizedBox.shrink();
                 },
               ),

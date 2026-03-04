@@ -12,7 +12,9 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
+      appBar: AppBar(title: const Text('Favorites'),
+        centerTitle: true,
+      ),
       body: BlocBuilder<FavoritesCubit, List<CountrySummary>>(
         builder: (context, favorites) {
           if (favorites.isEmpty) {

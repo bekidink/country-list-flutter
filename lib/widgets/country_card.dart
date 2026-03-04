@@ -19,14 +19,18 @@ class CountryCard extends StatelessWidget {
         .watch<FavoritesCubit>()
         .state
         .any((c) => c.cca2 == country.cca2);
-
+final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      elevation: 2,
+      elevation: 0.3,
+      color:   theme.brightness == Brightness.light
+      ? const Color(0xFFFFFFFF) // 👈 soft grey in light mode
+      : theme.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ListTile(
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        
         leading: Hero(
           tag: 'flag_${country.cca2}',
           child: ClipRRect(
