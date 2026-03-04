@@ -13,7 +13,10 @@ class CountryDetailScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<CountryDetailCubit>(param1: cca2)..load(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Country Details')),
+        appBar: AppBar(
+          title: Text('Country Details'),
+          centerTitle: true,
+        ),
         body: BlocBuilder<CountryDetailCubit, CountryDetailState>(
           builder: (context, state) {
             if (state is CountryDetailLoading) {
@@ -25,36 +28,56 @@ class CountryDetailScreen extends StatelessWidget {
                 onRetry: () => context.read<CountryDetailCubit>().load(),
               );
             }
+
             if (state is CountryDetailSuccess) {
               final d = state.details;
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     Hero(
-                      tag: 'flag_${d.name.common}',
+                      tag: 'flag_$cca2',
                       child: Image.network(
                         d.flags.png,
-                        height: 200,
+                        height: 260,
+                        width: double.infinity,
                         fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 260,
+                          color: Colors.grey.shade300,
+                          child: const Icon(Icons.flag, size: 100),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      d.name.common,
-                      style: Theme.of(context).textTheme.headlineMedium,
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            d.name.common,
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildStat('Population',
+                              '${(d.population / 1000000).toStringAsFixed(1)}M'),
+                          _buildStat(
+                              'Area', '${d.area.toStringAsFixed(0)} km²'),
+                          _buildStat('Region', d.region),
+                          _buildStat('Subregion', d.subregion),
+                          _buildStat('Capital',
+                              d.capital.isNotEmpty ? d.capital.first : 'N/A'),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Timezones',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          ...d.timezones.map(
+                            (tz) => ListTile(title: Text(tz), dense: true),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 30),
-                    _buildStatCard('Population', d.population.toString()),
-                    _buildStatCard('Area', '${d.area.toStringAsFixed(0)} km²'),
-                    _buildStatCard('Region', d.region),
-                    _buildStatCard('Subregion', d.subregion),
-                    _buildStatCard('Capital', d.capital.first),
-                    const SizedBox(height: 20),
-                    const Text('Timezones',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    ...d.timezones.map((tz) => ListTile(title: Text(tz))),
                   ],
                 ),
               );
@@ -66,12 +89,15 @@ class CountryDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value) {
+  Widget _buildStat(String label, String value) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         title: Text(label),
-        trailing:
-            Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+        trailing: Text(
+          value,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

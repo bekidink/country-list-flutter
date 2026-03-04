@@ -1,4 +1,4 @@
-import 'dart:convert'; // ← add this
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,11 +14,11 @@ class CountryRepository {
   Future<List<CountrySummary>> getAllCountries() async {
     const cacheKey = 'countries';
 
-    // Try cache first
-    final cachedJson = _cacheBox.get(cacheKey) as String?;
-    if (cachedJson != null) {
+    // Safe cache read (no forced cast)
+    final dynamic cached = _cacheBox.get(cacheKey);
+    if (cached is String && cached.isNotEmpty) {
       try {
-        final List<dynamic> decoded = jsonDecode(cachedJson);
+        final List<dynamic> decoded = jsonDecode(cached);
         return decoded
             .map(
                 (json) => CountrySummary.fromJson(json as Map<String, dynamic>))
@@ -30,31 +30,34 @@ class CountryRepository {
 
     try {
       final res = await _dio.get(
-        '/all?fields=name,flags,population,cca2,capital',
+        '/all?fields=name,flags,population,cca2,capital,region', // ← region added
       );
 
       final list = (res.data as List<dynamic>)
           .map((json) => CountrySummary.fromJson(json as Map<String, dynamic>))
           .toList();
 
-      // Cache as JSON string
+      // Cache safely as JSON string
       await _cacheBox.put(
-          cacheKey, jsonEncode(list.map((e) => e.toJson()).toList()));
+        cacheKey,
+        jsonEncode(list.map((e) => e.toJson()).toList()),
+      );
 
       return list;
     } catch (e) {
-      rethrow; // let cubit show error/retry
+      rethrow;
     }
   }
 
   Future<CountryDetails> getCountryDetails(String cca2) async {
     final key = 'detail_$cca2';
 
-    final cachedJson = _cacheBox.get(key) as String?;
-    if (cachedJson != null) {
+    // Safe cache read
+    final dynamic cached = _cacheBox.get(key);
+    if (cached is String && cached.isNotEmpty) {
       try {
-        return CountryDetails.fromJson(
-            jsonDecode(cachedJson) as Map<String, dynamic>);
+        final decoded = jsonDecode(cached);
+        return CountryDetails.fromJson(decoded as Map<String, dynamic>);
       } catch (_) {}
     }
 
@@ -63,22 +66,28 @@ class CountryRepository {
         '/alpha/$cca2?fields=name,flags,population,capital,region,subregion,area,timezones',
       );
 
-      final raw = (res.data as List<dynamic>).first as Map<String, dynamic>;
-      final details = CountryDetails.fromJson(raw);
+      // 🔥 THIS IS THE FIX
+      final Map<String, dynamic> rawData;
+      if (res.data is List && (res.data as List).isNotEmpty) {
+        rawData = (res.data as List).first as Map<String, dynamic>;
+      } else if (res.data is Map<String, dynamic>) {
+        rawData = res.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Unexpected API response format');
+      }
 
-      // Cache as JSON string
+      final details = CountryDetails.fromJson(rawData);
+
       await _cacheBox.put(key, jsonEncode(details.toJson()));
-
       return details;
     } catch (e) {
       rethrow;
     }
   }
-
   List<String> getFavoriteIds() => _favoritesBox.values.toList();
 
   Future<void> toggleFavorite(String cca2) async {
-    if (_favoritesBox.values.contains(cca2)) {
+    if (_favoritesBox.containsKey(cca2)) {
       await _favoritesBox.delete(cca2);
     } else {
       await _favoritesBox.put(cca2, cca2);

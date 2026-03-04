@@ -24,7 +24,7 @@ class FavoritesScreen extends StatelessWidget {
               final c = favorites[i];
               return CountryCard(
                 country: c,
-                isFavorite: true,
+               
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

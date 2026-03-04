@@ -20,15 +20,11 @@ CountrySummary _$CountrySummaryFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CountrySummary {
-  @HiveField(0)
   Name get name => throw _privateConstructorUsedError;
-  @HiveField(1)
   Flags get flags => throw _privateConstructorUsedError;
-  @HiveField(2)
   int get population => throw _privateConstructorUsedError;
-  @HiveField(3)
   String get cca2 => throw _privateConstructorUsedError;
-  @HiveField(4)
+  String get region => throw _privateConstructorUsedError;
   List<String>? get capital => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,11 +40,12 @@ abstract class $CountrySummaryCopyWith<$Res> {
       _$CountrySummaryCopyWithImpl<$Res, CountrySummary>;
   @useResult
   $Res call(
-      {@HiveField(0) Name name,
-      @HiveField(1) Flags flags,
-      @HiveField(2) int population,
-      @HiveField(3) String cca2,
-      @HiveField(4) List<String>? capital});
+      {Name name,
+      Flags flags,
+      int population,
+      String cca2,
+      String region,
+      List<String>? capital});
 
   $NameCopyWith<$Res> get name;
   $FlagsCopyWith<$Res> get flags;
@@ -71,6 +68,7 @@ class _$CountrySummaryCopyWithImpl<$Res, $Val extends CountrySummary>
     Object? flags = null,
     Object? population = null,
     Object? cca2 = null,
+    Object? region = null,
     Object? capital = freezed,
   }) {
     return _then(_value.copyWith(
@@ -89,6 +87,10 @@ class _$CountrySummaryCopyWithImpl<$Res, $Val extends CountrySummary>
       cca2: null == cca2
           ? _value.cca2
           : cca2 // ignore: cast_nullable_to_non_nullable
+              as String,
+      region: null == region
+          ? _value.region
+          : region // ignore: cast_nullable_to_non_nullable
               as String,
       capital: freezed == capital
           ? _value.capital
@@ -123,11 +125,12 @@ abstract class _$$CountrySummaryImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@HiveField(0) Name name,
-      @HiveField(1) Flags flags,
-      @HiveField(2) int population,
-      @HiveField(3) String cca2,
-      @HiveField(4) List<String>? capital});
+      {Name name,
+      Flags flags,
+      int population,
+      String cca2,
+      String region,
+      List<String>? capital});
 
   @override
   $NameCopyWith<$Res> get name;
@@ -150,6 +153,7 @@ class __$$CountrySummaryImplCopyWithImpl<$Res>
     Object? flags = null,
     Object? population = null,
     Object? cca2 = null,
+    Object? region = null,
     Object? capital = freezed,
   }) {
     return _then(_$CountrySummaryImpl(
@@ -169,6 +173,10 @@ class __$$CountrySummaryImplCopyWithImpl<$Res>
           ? _value.cca2
           : cca2 // ignore: cast_nullable_to_non_nullable
               as String,
+      region: null == region
+          ? _value.region
+          : region // ignore: cast_nullable_to_non_nullable
+              as String,
       capital: freezed == capital
           ? _value._capital
           : capital // ignore: cast_nullable_to_non_nullable
@@ -181,31 +189,29 @@ class __$$CountrySummaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CountrySummaryImpl implements _CountrySummary {
   const _$CountrySummaryImpl(
-      {@HiveField(0) required this.name,
-      @HiveField(1) required this.flags,
-      @HiveField(2) required this.population,
-      @HiveField(3) required this.cca2,
-      @HiveField(4) final List<String>? capital})
+      {required this.name,
+      required this.flags,
+      required this.population,
+      required this.cca2,
+      required this.region,
+      final List<String>? capital})
       : _capital = capital;
 
   factory _$CountrySummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$CountrySummaryImplFromJson(json);
 
   @override
-  @HiveField(0)
   final Name name;
   @override
-  @HiveField(1)
   final Flags flags;
   @override
-  @HiveField(2)
   final int population;
   @override
-  @HiveField(3)
   final String cca2;
+  @override
+  final String region;
   final List<String>? _capital;
   @override
-  @HiveField(4)
   List<String>? get capital {
     final value = _capital;
     if (value == null) return null;
@@ -216,7 +222,7 @@ class _$CountrySummaryImpl implements _CountrySummary {
 
   @override
   String toString() {
-    return 'CountrySummary(name: $name, flags: $flags, population: $population, cca2: $cca2, capital: $capital)';
+    return 'CountrySummary(name: $name, flags: $flags, population: $population, cca2: $cca2, region: $region, capital: $capital)';
   }
 
   @override
@@ -229,13 +235,14 @@ class _$CountrySummaryImpl implements _CountrySummary {
             (identical(other.population, population) ||
                 other.population == population) &&
             (identical(other.cca2, cca2) || other.cca2 == cca2) &&
+            (identical(other.region, region) || other.region == region) &&
             const DeepCollectionEquality().equals(other._capital, _capital));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, name, flags, population, cca2,
-      const DeepCollectionEquality().hash(_capital));
+      region, const DeepCollectionEquality().hash(_capital));
 
   @JsonKey(ignore: true)
   @override
@@ -254,29 +261,27 @@ class _$CountrySummaryImpl implements _CountrySummary {
 
 abstract class _CountrySummary implements CountrySummary {
   const factory _CountrySummary(
-      {@HiveField(0) required final Name name,
-      @HiveField(1) required final Flags flags,
-      @HiveField(2) required final int population,
-      @HiveField(3) required final String cca2,
-      @HiveField(4) final List<String>? capital}) = _$CountrySummaryImpl;
+      {required final Name name,
+      required final Flags flags,
+      required final int population,
+      required final String cca2,
+      required final String region,
+      final List<String>? capital}) = _$CountrySummaryImpl;
 
   factory _CountrySummary.fromJson(Map<String, dynamic> json) =
       _$CountrySummaryImpl.fromJson;
 
   @override
-  @HiveField(0)
   Name get name;
   @override
-  @HiveField(1)
   Flags get flags;
   @override
-  @HiveField(2)
   int get population;
   @override
-  @HiveField(3)
   String get cca2;
   @override
-  @HiveField(4)
+  String get region;
+  @override
   List<String>? get capital;
   @override
   @JsonKey(ignore: true)

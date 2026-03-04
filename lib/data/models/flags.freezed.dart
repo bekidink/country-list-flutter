@@ -20,7 +20,6 @@ Flags _$FlagsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Flags {
-  @HiveField(0)
   String get png => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -33,7 +32,7 @@ abstract class $FlagsCopyWith<$Res> {
   factory $FlagsCopyWith(Flags value, $Res Function(Flags) then) =
       _$FlagsCopyWithImpl<$Res, Flags>;
   @useResult
-  $Res call({@HiveField(0) String png});
+  $Res call({String png});
 }
 
 /// @nodoc
@@ -67,7 +66,7 @@ abstract class _$$FlagsImplCopyWith<$Res> implements $FlagsCopyWith<$Res> {
       __$$FlagsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@HiveField(0) String png});
+  $Res call({String png});
 }
 
 /// @nodoc
@@ -95,13 +94,12 @@ class __$$FlagsImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$FlagsImpl implements _Flags {
-  const _$FlagsImpl({@HiveField(0) required this.png});
+  const _$FlagsImpl({required this.png});
 
   factory _$FlagsImpl.fromJson(Map<String, dynamic> json) =>
       _$$FlagsImplFromJson(json);
 
   @override
-  @HiveField(0)
   final String png;
 
   @override
@@ -136,12 +134,11 @@ class _$FlagsImpl implements _Flags {
 }
 
 abstract class _Flags implements Flags {
-  const factory _Flags({@HiveField(0) required final String png}) = _$FlagsImpl;
+  const factory _Flags({required final String png}) = _$FlagsImpl;
 
   factory _Flags.fromJson(Map<String, dynamic> json) = _$FlagsImpl.fromJson;
 
   @override
-  @HiveField(0)
   String get png;
   @override
   @JsonKey(ignore: true)

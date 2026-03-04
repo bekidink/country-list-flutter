@@ -7,6 +7,7 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final CountryRepository repository;
   List<CountrySummary> _allCountries = [];
+  String _currentQuery = '';
 
   HomeCubit(this.repository) : super(HomeLoading());
 
@@ -18,6 +19,7 @@ class HomeCubit extends Cubit<HomeState> {
         countries: _allCountries,
         filtered: _allCountries,
         sortBy: 'name',
+        selectedContinent: null,
       ));
     } catch (e) {
       emit(HomeError(e.toString()));
@@ -25,14 +27,21 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void search(String query) {
+    _currentQuery = query.toLowerCase();
     if (state is! HomeSuccess) return;
     final success = state as HomeSuccess;
-    final filtered = query.isEmpty
-        ? _allCountries
-        : _allCountries
-            .where((c) =>
-                c.name.common.toLowerCase().contains(query.toLowerCase()))
-            .toList();
+
+    var filtered = success.countries;
+    if (success.selectedContinent != null) {
+      filtered =
+          filtered.where((c) => c.region == success.selectedContinent).toList();
+    }
+
+    if (_currentQuery.isNotEmpty) {
+      filtered = filtered
+          .where((c) => c.name.common.toLowerCase().contains(_currentQuery))
+          .toList();
+    }
 
     emit(success.copyWith(filtered: filtered));
   }
@@ -49,19 +58,34 @@ class HomeCubit extends Cubit<HomeState> {
     emit(success.copyWith(filtered: sorted, sortBy: by));
   }
 
+  void filterByContinent(String? continent) {
+    if (state is! HomeSuccess) return;
+    final success = state as HomeSuccess;
+
+    var filtered = continent == null
+        ? success.countries
+        : success.countries.where((c) => c.region == continent).toList();
+
+    if (_currentQuery.isNotEmpty) {
+      filtered = filtered
+          .where((c) => c.name.common.toLowerCase().contains(_currentQuery))
+          .toList();
+    }
+
+    emit(success.copyWith(filtered: filtered, selectedContinent: continent));
+  }
+
   Future<void> toggleFavorite(String cca2) async {
     await repository.toggleFavorite(cca2);
+    // Re-apply current filters
     if (state is HomeSuccess) {
       final success = state as HomeSuccess;
-      emit(HomeSuccess(
-        countries: success.countries,
-        filtered: success.filtered,
-        sortBy: success.sortBy,
-      ));
+      search(_currentQuery); // refresh filtered list
     }
   }
 
   Future<void> refresh() async {
     await loadCountries();
+    search(_currentQuery);
   }
 }

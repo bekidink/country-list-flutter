@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive/hive.dart';
+
 import 'name.dart';
 import 'flags.dart';
 
@@ -7,7 +7,7 @@ part 'country_details.freezed.dart';
 part 'country_details.g.dart';
 
 @freezed
-@HiveType(typeId: 3)
+
 class CountryDetails with _$CountryDetails {
   const factory CountryDetails({
     required Name name,
